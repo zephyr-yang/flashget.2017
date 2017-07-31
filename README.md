@@ -9,4 +9,10 @@ A network client can download file in the parallel mode
 
 ~/Desktop/appDirectory$ rm multiGet-example.zip ; rm tmp.\* ; ./client -p 6
 
+<b>How to run the application, show help.</b>
+
+~/Desktop/appDirectory$ ./client -h
+
+
+
 
