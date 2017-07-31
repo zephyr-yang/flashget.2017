@@ -1,8 +1,12 @@
 # flashget.2017
-a network client can download file in the parallel mode
+A network client can download file in the parallel mode
 
-How to compile the project
+<b>How to compile the project</b>
 
+~/Desktop/appDirectory$ clear; gcc client_file.c client_socket.c client_uri.c client_http.c client_main.c -o client -w 
 
-How to run the application.
+<b>How to run the application.</b>
+
+~/Desktop/appDirectory$ rm multiGet-example.zip ; rm tmp.\* ; ./client -p 6
+
 
