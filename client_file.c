@@ -5,7 +5,7 @@
 #include <fcntl.h>
 
 /**
- * 
+ *
  * create the files in batch
  *
  **/
@@ -13,32 +13,32 @@ int
 createWRFileInBatch (int fileHandlerArray[], int fileHandlerArraySize)
 {
 
-  int retValue = 0;
+    int retValue = 0;
 
-  if (fileHandlerArray != NULL && fileHandlerArraySize > 0)
+    if (fileHandlerArray != NULL && fileHandlerArraySize > 0)
     {
 
-      for (int i = 0; i < fileHandlerArraySize; i++)
-	{
+        for (int i = 0; i < fileHandlerArraySize; i++)
+        {
 
-	  fileHandlerArray[i] = -1;
-	}
+            fileHandlerArray[i] = -1;
+        }
 
-      for (int i = 0; i < fileHandlerArraySize; i++)
-	{
+        for (int i = 0; i < fileHandlerArraySize; i++)
+        {
 
-	  char buffer[64];
-	  int n = sprintf (buffer, "tmp.%03d", i);
+            char buffer[64];
+            int n = sprintf (buffer, "tmp.%03d", i);
 
-	  fileHandlerArray[i] = open (buffer, O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU);
-	}
+            fileHandlerArray[i] = open (buffer, O_CREAT | O_WRONLY | O_TRUNC, S_IRWXU);
+        }
     }
 
-  return retValue;
+    return retValue;
 }
 
 /**
- * 
+ *
  * create the files in batch
  *
  **/
@@ -46,103 +46,103 @@ int
 createRDFileInBatch (int fileHandlerArray[], int fileHandlerArraySize)
 {
 
-  int retValue = 0;
+    int retValue = 0;
 
-  if (fileHandlerArray != NULL && fileHandlerArraySize > 0)
+    if (fileHandlerArray != NULL && fileHandlerArraySize > 0)
     {
 
-      for (int i = 0; i < fileHandlerArraySize; i++)
-	{
+        for (int i = 0; i < fileHandlerArraySize; i++)
+        {
 
-	  fileHandlerArray[i] = -1;
-	}
+            fileHandlerArray[i] = -1;
+        }
 
-      for (int i = 0; i < fileHandlerArraySize; i++)
-	{
+        for (int i = 0; i < fileHandlerArraySize; i++)
+        {
 
-	  char buffer[64];
-	  int n = sprintf (buffer, "tmp.%03d", i);
+            char buffer[64];
+            int n = sprintf (buffer, "tmp.%03d", i);
 
-	  fileHandlerArray[i] = open (buffer, O_RDONLY);
-	}
+            fileHandlerArray[i] = open (buffer, O_RDONLY);
+        }
     }
 
-  return retValue;
+    return retValue;
 }
 
 /**
- * 
+ *
  *  close the files in batch
- * 
+ *
  **/
 int
 closeFileInBatch (int fileHandlerArray[], int fileHandlerArraySize)
 {
 
-  int retValue = 0;
+    int retValue = 0;
 
-  if (fileHandlerArray != NULL && fileHandlerArraySize > 0)
+    if (fileHandlerArray != NULL && fileHandlerArraySize > 0)
     {
 
-      for (int i = 0; i < fileHandlerArraySize; i++)
-	{
+        for (int i = 0; i < fileHandlerArraySize; i++)
+        {
 
-	  int fd = fileHandlerArray[i];
-	  if (fd >= 0)
-	    {
+            int fd = fileHandlerArray[i];
+            if (fd >= 0)
+            {
 
-	      close (fd);
+                close (fd);
 
-	      fileHandlerArray[i] = -1;
-	    }
-	}
+                fileHandlerArray[i] = -1;
+            }
+        }
     }
 
-  return retValue;
+    return retValue;
 }
 
 /**
- * 
+ *
  * create target file (parent file)
- * 
+ *
  **/
 int
 createTargetFile (char *fileName)
 {
 
-  int retValue = -1;
+    int retValue = -1;
 
-  retValue = open (fileName, O_WRONLY | O_CREAT | O_APPEND, S_IRWXU);
+    retValue = open (fileName, O_WRONLY | O_CREAT | O_APPEND, S_IRWXU);
 
-  return retValue;
+    return retValue;
 }
 
 int
 closeTargetfile (int fd)
 {
 
-  int retValue = 0;
+    int retValue = 0;
 
-  if (fd > -1)
+    if (fd > -1)
     {
-      close (fd);
+        close (fd);
     }
 
-  return retValue;
+    return retValue;
 }
 
 /**
- * 
+ *
  * copy all children file to a parent file in sequence.
- * 
+ *
  **/
 int
 mergeFile (int targetFileHandler, int fileHandlerArray[],
-                 int fileHandlerArraySize, int useWindowsStyle)
+           int fileHandlerArraySize, int useWindowsStyle)
 {
     int retValue = 0;
 
-	printf("\nmerging");
+    printf("\nmerging");
 
     if (fileHandlerArray != NULL && fileHandlerArraySize > 0
             && targetFileHandler > 0)
@@ -155,13 +155,13 @@ mergeFile (int targetFileHandler, int fileHandlerArray[],
 
             int childFd = fileHandlerArray[i];
 
-			long writeCount = 0;
+            long writeCount = 0;
 
             if (childFd >= 0)
             {
                 char buf[8192];
 
-				int foundNewLine = 0;
+                int foundNewLine = 0;
 
                 while (1)
                 {
@@ -171,50 +171,50 @@ mergeFile (int targetFileHandler, int fileHandlerArray[],
                     if (!result)
                         break;
 
-                   	//fprintf(stderr, " the read result is %d \n", result);
+                    //fprintf(stderr, " the read result is %d \n", result);
 
-					if(foundNewLine){
-                    	int count = write (targetFileHandler, &buf[0], result);
+                    if(foundNewLine) {
+                        int count = write (targetFileHandler, &buf[0], result);
 
-						writeCount += count;
-						printf(".");
-					}else{
+                        writeCount += count;
+                        printf(".");
+                    } else {
 
-						for(size_t j=0; j< result -4 ; j++){
+                        for(size_t j=0; j< result -4 ; j++) {
 
-							if(useWindowsStyle){
-			
-								if(buf[j] == '\r' && buf[j+1] == '\n' && buf[j+2] == '\r' && buf[j+3] == '\n'){
+                            if(useWindowsStyle) {
 
-					               	//printf ("windows %d found end at %d \n", i, j);
-				
-									int count = write(targetFileHandler, &buf[j+4], (result - j - 4));
+                                if(buf[j] == '\r' && buf[j+1] == '\n' && buf[j+2] == '\r' && buf[j+3] == '\n') {
 
-									foundNewLine = 1;
+                                    //printf ("windows %d found end at %d \n", i, j);
 
-									writeCount += count;
-									break;								
-								}
+                                    int count = write(targetFileHandler, &buf[j+4], (result - j - 4));
 
-							}else{					            
+                                    foundNewLine = 1;
 
-								if(buf[j] == '\n' && buf[j+1] == '\n'){
+                                    writeCount += count;
+                                    break;
+                                }
 
-									//printf (" linux %d found end at %d \n", i, j);
-				
-									int count = write(targetFileHandler, &buf[j+2], (result - j - 2));
+                            } else {
 
-									foundNewLine = 1;								
+                                if(buf[j] == '\n' && buf[j+1] == '\n') {
 
-									writeCount += count;
-									break;
-								}
-							}
-						}										
-					}
+                                    //printf (" linux %d found end at %d \n", i, j);
+
+                                    int count = write(targetFileHandler, &buf[j+2], (result - j - 2));
+
+                                    foundNewLine = 1;
+
+                                    writeCount += count;
+                                    break;
+                                }
+                            }
+                        }
+                    }
                 }
 
-               	//printf (" %d => %ld \n", i, writeCount);
+                //printf (" %d => %ld \n", i, writeCount);
             }
         }
     }
