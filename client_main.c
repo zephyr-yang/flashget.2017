@@ -12,12 +12,12 @@ int main(int argc, char *argv[]) {
 
     char *uri = "http://dist.pravala.com/coding/multiGet-example.zip";
 
-	int USE_WINDOWS_STYLE = 1;
-	int USE_LINUX_STYLE = 0;
+    int USE_WINDOWS_STYLE = 1;
+    int USE_LINUX_STYLE = 0;
 
-	int newLineStyle = USE_LINUX_STYLE;
+    int newLineStyle = USE_LINUX_STYLE;
 
-	int parallelNumber = 4;
+    int parallelNumber = 4;
 
     int fileHandlerArraySize = parallelNumber;
     int socketArraySize = parallelNumber;
@@ -33,52 +33,52 @@ int main(int argc, char *argv[]) {
 
     long contentLength;
 
-	printf("\n");
+    printf("\n");
 
-	//
-	// parse incoming parameters.
-	// 
-	int opt;
-	int countIn;
-	while ((opt = getopt (argc, argv, "u:p:h")) != -1)
-	{
-    	switch (opt)
-    	{
-      		case 'u':
+    //
+    // parse incoming parameters.
+    //
+    int opt;
+    int countIn;
+    while ((opt = getopt (argc, argv, "u:p:h")) != -1)
+    {
+        switch (opt)
+        {
+        case 'u':
 
-				uri = optarg;
-				
-                printf ("Network resource to fetch is %s \n", optarg);
+            uri = optarg;
 
-                break;
+            printf ("Network resource to fetch is %s \n", optarg);
 
-      		case 'p':
+            break;
 
-				sscanf(optarg, "%d", &countIn);
+        case 'p':
 
-				if(countIn > 0 && countIn < MAX_PARALLEL_NUMBER){
+            sscanf(optarg, "%d", &countIn);
 
-		    		fileHandlerArraySize = countIn;
-    				socketArraySize = countIn;
-				}
+            if(countIn > 0 && countIn < MAX_PARALLEL_NUMBER) {
 
-                printf ("Parallel number is set to %d \n", socketArraySize);
-                break;
+                fileHandlerArraySize = countIn;
+                socketArraySize = countIn;
+            }
 
-			case 'h':
-		
-	         	printf("Usage: %s [OPTIONS]\n", argv[0]);
-         		printf("  -u uri                    optional, network resouce to download \n");
-         		printf("  -p parallel number        optional, how many parrel download jobs to execute, default is 4\n");
-         		printf("  -h                        print this help and exit\n");
-         		printf("\n");
-         		return(0);
-    	}
-  	}
+            printf ("Parallel number is set to %d \n", socketArraySize);
+            break;
 
-	//
-	// parse the input uri
-	//
+        case 'h':
+
+            printf("Usage: %s [OPTIONS]\n", argv[0]);
+            printf("  -u uri                    optional, network resouce to download \n");
+            printf("  -p parallel number        optional, how many parrel download jobs to execute, default is 4\n");
+            printf("  -h                        print this help and exit\n");
+            printf("\n");
+            return(0);
+        }
+    }
+
+    //
+    // parse the input uri
+    //
     extractHostFromUri(uri, host, STR_LENGTH);
     extractPathFromUri(uri, path, STR_LENGTH);
     extractFilenameFromUri(uri, filename, STR_LENGTH);
@@ -87,9 +87,9 @@ int main(int argc, char *argv[]) {
     printf("path = %s \n", path);
     printf("filename = %s \n", filename);
 
-	//
+    //
     // get the target file size
-	//
+    //
     getSockAddrFromDomainName(host, &server);
     createSocketInBatch(socketArray, 1, &server);
     contentLength = queryResourceSize(socketArray[0], path, host, newLineStyle);
@@ -97,19 +97,19 @@ int main(int argc, char *argv[]) {
 
     printf("\nContentLength = %ld \n" , contentLength);
 
-	//
-	// download file in parallel 
-	//
+    //
+    // download file in parallel
+    //
 
     createWRFileInBatch(fileHandlerArray, fileHandlerArraySize);
     createSocketInBatch(socketArray, socketArraySize, &server);
-	getResource(socketArray, fileHandlerArray, fileHandlerArraySize, path, host, contentLength, newLineStyle);
+    getResource(socketArray, fileHandlerArray, fileHandlerArraySize, path, host, contentLength, newLineStyle);
     closeFileInBatch(fileHandlerArray, fileHandlerArraySize);
     closeSocketInBatch(socketArray, socketArraySize);
 
-	//
-	// merge file.		
-	//
+    //
+    // merge file.
+    //
 
     int targetFd = createTargetFile(filename);
     createRDFileInBatch(fileHandlerArray, fileHandlerArraySize);
